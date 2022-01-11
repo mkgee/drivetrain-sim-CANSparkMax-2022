@@ -1,0 +1,99 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot;
+
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
+// import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
+import java.util.List;
+
+public class Robot extends TimedRobot {
+  private final XboxController m_controller = new XboxController(0);
+
+  // Slew rate limiters to make joystick inputs more gentle; 1/3 sec from 0
+  // to 1.
+  private final SlewRateLimiter m_speedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter m_rotLimiter = new SlewRateLimiter(3);
+
+  private final Drivetrain m_drive = new Drivetrain();
+  private final RamseteController m_ramsete = new RamseteController();
+  private final Timer m_timer = new Timer();
+  private Trajectory m_trajectory;
+
+  @Override
+  public void robotInit() {
+    // Flush NetworkTables every loop. This ensures that robot pose and other values
+    // are sent during every iteration.
+    setNetworkTablesFlushEnabled(true);
+
+    m_trajectory =
+        TrajectoryGenerator.generateTrajectory(
+            new Pose2d(2, 2, new Rotation2d()),
+            List.of(new Translation2d(3,2),
+                    new Translation2d(3.5,4),
+                    new Translation2d(4.5,5.5),
+                    new Translation2d(11,6)),
+            new Pose2d(12, 4, new Rotation2d(1.5)),
+            new TrajectoryConfig(2, 2));
+
+    // m_drive.init();
+  }
+
+  @Override
+  public void robotPeriodic() {
+    m_drive.periodic();
+    // System.out.println("pose: " + m_drive.getPose());
+
+  }
+
+  @Override
+  public void autonomousInit() {
+    m_timer.reset();
+    m_timer.start();
+    //debug
+    System.out.println("initial pose: " + m_trajectory.getInitialPose());
+    m_drive.resetOdometry(m_trajectory.getInitialPose());
+  }
+
+  @Override
+  public void autonomousPeriodic() {
+    double elapsed = m_timer.get();
+    Trajectory.State reference = m_trajectory.sample(elapsed);
+    ChassisSpeeds speeds = m_ramsete.calculate(m_drive.getPose(), reference);
+    m_drive.drive(speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+  }
+
+  @Override
+  @SuppressWarnings("LocalVariableName")
+  public void teleopPeriodic() {
+    // Get the x speed. We are inverting this because Xbox controllers return
+    // negative values when we push forward.
+    double xSpeed = -m_speedLimiter.calculate(m_controller.getLeftY()) * Drivetrain.kMaxSpeed;
+
+    // Get the rate of angular rotation. We are inverting this because we want a
+    // positive value when we pull to the left (remember, CCW is positive in
+    // mathematics). Xbox controllers return positive values when you pull to
+    // the right by default.
+    double rot = -m_rotLimiter.calculate(m_controller.getRightX()) * Drivetrain.kMaxAngularSpeed;
+    m_drive.drive(xSpeed, rot);
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // System.out.println("method simulationPeriodic entry ");
+    m_drive.simulationPeriodic();
+  }
+}
