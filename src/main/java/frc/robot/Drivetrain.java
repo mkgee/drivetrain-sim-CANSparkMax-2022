@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -90,10 +89,6 @@ public class Drivetrain {
     m_rightGroup.setInverted(true);
     SmartDashboard.putData("Field", m_fieldSim);
   }
-
-  // public void init() {
-  //   m_fieldSim.setRobotPose(new Pose2d(2, 2, new Rotation2d()) );
-  // }
 
   /** Sets speeds to the drivetrain motors. */
   public void setSpeeds(DifferentialDriveWheelSpeeds speeds) {

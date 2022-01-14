@@ -16,8 +16,6 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-// import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-
 import java.util.List;
 
 public class Robot extends TimedRobot {
@@ -39,6 +37,8 @@ public class Robot extends TimedRobot {
     // are sent during every iteration.
     setNetworkTablesFlushEnabled(true);
 
+    // define the trajectory to start at 2,2 and end at 12,4 with intermediate points at
+    // 3,2 3.5,4 4.5,5.5 11,6
     m_trajectory =
         TrajectoryGenerator.generateTrajectory(
             new Pose2d(2, 2, new Rotation2d()),
@@ -55,8 +55,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     m_drive.periodic();
-    // System.out.println("pose: " + m_drive.getPose());
-
   }
 
   @Override
