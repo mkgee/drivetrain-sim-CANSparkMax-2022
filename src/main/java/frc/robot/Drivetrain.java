@@ -1,5 +1,8 @@
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,10 +35,16 @@ public class Drivetrain {
   private static final double kWheelRadius = 0.0508;
   private static final int kEncoderResolution = -4096;
 
-  private final PWMSparkMax m_leftLeader = new PWMSparkMax(1);
-  private final PWMSparkMax m_leftFollower = new PWMSparkMax(2);
-  private final PWMSparkMax m_rightLeader = new PWMSparkMax(3);
-  private final PWMSparkMax m_rightFollower = new PWMSparkMax(4);
+  // private final PWMSparkMax m_leftLeader = new PWMSparkMax(1);
+  // private final PWMSparkMax m_leftFollower = new PWMSparkMax(2);
+  // private final PWMSparkMax m_rightLeader = new PWMSparkMax(3);
+  // private final PWMSparkMax m_rightFollower = new PWMSparkMax(4);
+
+  private final MotorType motorType = MotorType.kBrushed;
+  private final CANSparkMax m_leftLeader = new CANSparkMax(1, motorType);
+  private final CANSparkMax m_leftFollower = new CANSparkMax(2, motorType);
+  private final CANSparkMax m_rightLeader = new CANSparkMax(3, motorType);
+  private final CANSparkMax m_rightFollower = new CANSparkMax(4, motorType);
 
   private final MotorControllerGroup m_leftGroup =
       new MotorControllerGroup(m_leftLeader, m_leftFollower);

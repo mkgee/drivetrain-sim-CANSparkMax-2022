@@ -9,7 +9,6 @@
     },
     "windows": {
       "/SmartDashboard/Field": {
-        "image": "C:\\Users\\mitch\\CCHS Robotics 4550\\code\\PathWeaver\\src\\main\\resources\\edu\\wpi\\first\\pathweaver\\2022-field.png",
         "window": {
           "visible": true
         }
